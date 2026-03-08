@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Veri Bilimi Yol Haritası</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #111118;
+    --border: #1e1e2e;
+    --accent: #7c3aed;
+    --accent2: #a855f7;
+    --accent3: #e879f9;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --green: #10b981;
+    --orange: #f59e0b;
+    --red: #ef4444;
+    --cyan: #06b6d4;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    overflow-x: hidden;
+    line-height: 1.6;
+  }
+
+  /* Animated background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% 10%, rgba(124,58,237,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 80%, rgba(168,85,247,0.08) 0%, transparent 50%),
+      radial-gradient(ellipse 40% 30% at 50% 50%, rgba(232,121,249,0.04) 0%, transparent 40%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Grid overlay */
+  body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* HEADER */
+  header {
+    padding: 80px 0 60px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .badge {
+    display: inline-block;
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--accent2);
+    border: 1px solid rgba(168,85,247,0.3);
+    padding: 6px 16px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+    background: rgba(124,58,237,0.08);
+    animation: fadeDown 0.6s ease both;
+  }
+
+  h1 {
+    font-size: clamp(36px, 7vw, 72px);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -2px;
+    margin-bottom: 20px;
+    animation: fadeDown 0.6s 0.1s ease both;
+  }
+
+  h1 span {
+    background: linear-gradient(135deg, var(--accent2), var(--accent3));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 520px;
+    margin: 0 auto 48px;
+    font-weight: 400;
+    animation: fadeDown 0.6s 0.2s ease both;
+  }
+
+  .roadmap-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--cyan);
+    text-decoration: none;
+    border: 1px solid rgba(6,182,212,0.3);
+    padding: 10px 20px;
+    border-radius: 2px;
+    background: rgba(6,182,212,0.05);
+    transition: all 0.2s;
+    animation: fadeDown 0.6s 0.3s ease both;
+  }
+
+  .roadmap-link:hover {
+    background: rgba(6,182,212,0.12);
+    border-color: rgba(6,182,212,0.6);
+    transform: translateY(-2px);
+  }
+
+  .roadmap-link::before { content: '→'; }
+
+  /* SECTION DIVIDER */
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin: 56px 0 32px;
+  }
+
+  .divider-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+  }
+
+  .divider-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 32px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s, border-color 0.3s;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  .card:hover {
+    transform: translateY(-4px);
+    border-color: rgba(124,58,237,0.4);
+  }
+
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--accent), var(--accent3));
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .card:hover::before { opacity: 1; }
+
+  .card-number {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--accent2);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .card h2 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 16px;
+    letter-spacing: -0.5px;
+  }
+
+  .card p, .card li {
+    color: #94a3b8;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.8;
+  }
+
+  .card ul {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card ul li {
+    padding-left: 20px;
+    position: relative;
+  }
+
+  .card ul li::before {
+    content: '─';
+    position: absolute;
+    left: 0;
+    color: var(--accent2);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* GRID LAYOUTS */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+
+  /* ACCENT COLORS FOR CARDS */
+  .card.accent-green::before { background: linear-gradient(to right, var(--green), #6ee7b7); }
+  .card.accent-orange::before { background: linear-gradient(to right, var(--orange), #fcd34d); }
+  .card.accent-red::before { background: linear-gradient(to right, var(--red), #fca5a5); }
+  .card.accent-cyan::before { background: linear-gradient(to right, var(--cyan), #67e8f9); }
+
+  .card.accent-green { --c: var(--green); }
+  .card.accent-orange { --c: var(--orange); }
+  .card.accent-red { --c: var(--red); }
+  .card.accent-cyan { --c: var(--cyan); }
+
+  .card.accent-green .card-number { color: var(--green); }
+  .card.accent-orange .card-number { color: var(--orange); }
+  .card.accent-red .card-number { color: var(--red); }
+  .card.accent-cyan .card-number { color: var(--cyan); }
+
+  /* HIGHLIGHT BOX */
+  .highlight-box {
+    background: rgba(124,58,237,0.08);
+    border: 1px solid rgba(124,58,237,0.25);
+    border-radius: 4px;
+    padding: 24px 28px;
+    font-size: 14px;
+    color: #c4b5fd;
+    line-height: 1.8;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .highlight-box::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--accent), var(--accent3));
+  }
+
+  /* WARNING / TIP BOXES */
+  .tip {
+    background: rgba(16,185,129,0.06);
+    border: 1px solid rgba(16,185,129,0.2);
+    border-radius: 4px;
+    padding: 16px 20px;
+    font-size: 13px;
+    color: #6ee7b7;
+    line-height: 1.7;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    margin-top: 12px;
+  }
+
+  .tip-icon {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    background: rgba(16,185,129,0.15);
+    padding: 3px 8px;
+    border-radius: 2px;
+    white-space: nowrap;
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+
+  /* TAG PILLS */
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 16px;
+  }
+
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 2px;
+    letter-spacing: 0.5px;
+  }
+
+  .tag-purple { background: rgba(124,58,237,0.15); color: var(--accent2); border: 1px solid rgba(124,58,237,0.2); }
+  .tag-cyan { background: rgba(6,182,212,0.1); color: var(--cyan); border: 1px solid rgba(6,182,212,0.2); }
+  .tag-green { background: rgba(16,185,129,0.1); color: var(--green); border: 1px solid rgba(16,185,129,0.2); }
+  .tag-orange { background: rgba(245,158,11,0.1); color: var(--orange); border: 1px solid rgba(245,158,11,0.2); }
+
+  /* BIG SECTION CARD */
+  .section-hero {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 40px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .section-hero::before {
+    content: '';
+    position: absolute;
+    top: -60px;
+    right: -60px;
+    width: 200px;
+    height: 200px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(124,58,237,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .section-hero h2 {
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 20px;
+  }
+
+  /* STEP COUNTER */
+  .step-counter {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 48px;
+    overflow-x: auto;
+    padding-bottom: 8px;
+  }
+
+  .step-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    min-width: 80px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+  }
+
+  .step-item.active { opacity: 1; }
+
+  .step-dot {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+  }
+
+  .step-item.active .step-dot {
+    background: var(--accent);
+    border-color: var(--accent);
+    box-shadow: 0 0 20px rgba(124,58,237,0.4);
+  }
+
+  .step-label {
+    font-size: 10px;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 1px;
+    text-align: center;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .step-connector {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    min-width: 20px;
+    margin-top: -18px;
+  }
+
+  /* FOOTER */
+  footer {
+    margin-top: 100px;
+    padding: 48px 0;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  footer p {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    letter-spacing: 1px;
+  }
+
+  /* ANIMATIONS */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .card:nth-child(1) { animation-delay: 0.05s; }
+  .card:nth-child(2) { animation-delay: 0.1s; }
+  .card:nth-child(3) { animation-delay: 0.15s; }
+  .card:nth-child(4) { animation-delay: 0.2s; }
+  .card:nth-child(5) { animation-delay: 0.25s; }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .grid-2, .grid-3 { grid-template-columns: 1fr; }
+    .section-hero { padding: 28px 20px; }
+    header { padding: 48px 0 32px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <header>
+    <div class="badge">Kişisel Yol Haritası</div>
+    <h1>Veri Bilimi'ne<br><span>Sıfırdan Giriş</span></h1>
+    <p class="subtitle">Kafanı karıştırmadan, adım adım ilerlemek için hazırlanmış bir rehber. Stres yok, sadece odak.</p>
+    <a href="https://roadmap.sh/ai-data-scientist" target="_blank" class="roadmap-link">
+      roadmap.sh/ai-data-scientist — Referans Yol Haritası
+    </a>
+  </header>
+
+  <!-- STEP PROGRESS -->
+  <div class="step-counter">
+    <div class="step-item active">
+      <div class="step-dot">01</div>
+      <div class="step-label">Temizlik</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item active">
+      <div class="step-dot">02</div>
+      <div class="step-label">Yol Haritası</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item active">
+      <div class="step-dot">03</div>
+      <div class="step-label">Matematik</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item active">
+      <div class="step-dot">04</div>
+      <div class="step-label">Kodlama</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item active">
+      <div class="step-dot">05</div>
+      <div class="step-label">SQL</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item active">
+      <div class="step-dot">06</div>
+      <div class="step-label">Veri</div>
+    </div>
+    <div class="step-connector"></div>
+    <div class="step-item">
+      <div class="step-dot">07</div>
+      <div class="step-label">İleri</div>
+    </div>
+  </div>
+
+  <!-- SECTION 1: BAŞLANGIÇ -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">§ 01 — Başlamadan Önce</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="highlight-box">
+    Kaydettiğin her şeyi sil, yeni bir başlangıç yap. Kafanda ki organize etme isteği yok olacak. Fazla kaynak seni strese sokar ve verimsiz olur. Sıfır gürültü, maksimum odak.
+  </div>
+
+  <!-- SECTION 2: YOL HARİTASI -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">§ 02 — Referans Yol Haritası</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="card">
+    <span class="card-number">// 02 · Yön Belirle</span>
+    <h2>Bize Bir Yol Haritası Gerekli</h2>
+    <p>Referans aldığımız yol haritası <strong style="color: var(--accent2);">roadmap.sh/ai-data-scientist</strong>. Bu yol haritası gayet güzel bir içerik sunuyor ve her konunun kaynaklarını da veriyor.</p>
+    <div class="tip">
+      <span class="tip-icon">→ İPUCU</span>
+      Yol haritasını bir bütün olarak incele. 1.adımdayken 10.adımı düşünme. Her şeyin zamanı gelecek.
+    </div>
+  </div>
+
+  <!-- SECTION 3: MATEMATİK -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">§ 03 — İlk 3 Adım</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="card accent-green">
+    <span class="card-number">// 03 · Temel Bilimler</span>
+    <h2>Matematik, İstatistik, Ekonomi</h2>
+    <p>Bunları zaten okulda öğreniyorsun. Yol haritasının ilk 3 adımı bu konulardan oluşuyor. Kaynaklar da zaten yol haritasında mevcut.</p>
+    <div class="tags">
+      <span class="tag tag-green">Matematik</span>
+      <span class="tag tag-green">İstatistik</span>
+      <span class="tag tag-green">Ekonomi</span>
+      <span class="tag tag-green">Lineer Cebir</span>
+    </div>
+  </div>
+
+  <!-- SECTION 4: KODLAMA -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">§ 04 — Kodlama</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="section-hero" style="margin-bottom: 20px;">
+    <span class="card-number" style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--accent2); text-transform: uppercase; margin-bottom: 12px; display: block;">// 04 · Araç Seti</span>
+    <h2>Kodlama Bir Araç, Nihai Amaç Değil</h2>
+    <p style="color: #94a3b8; font-size: 14px; margin-bottom: 20px; line-height: 1.8;">
+      Kodlamayı fazla kafaya takma. C öğrenmenin asıl amacı; performans, cache (önbellekleme) ve makinenin nasıl düşündüğünü anlamak. Senin için kodlama <strong style="color: var(--text);">Python</strong> ve <strong style="color: var(--text);">R</strong> arasında dönecek.
+    </p>
+  </div>
+
+  <div class="grid-2">
+    <div class="card accent-cyan">
+      <span class="card-number">// Python</span>
+      <h2>Python</h2>
+      <ul>
+        <li>3. seviye güçlü programlama dili</li>
+        <li>Kolay sözdizimi, hızlı öğrenme eğrisi</li>
+        <li>Pandas, PyTorch, NumPy kütüphaneleri var</li>
+        <li>Veri bilimi, ML, web, masaüstü — her alanda</li>
+        <li>Anlamadığın kodlar için ChatGPT'ye sor</li>
+        <li>Derin öğrenmek için w3schools + resmi docs</li>
+      </ul>
+      <div class="tip" style="background: rgba(6,182,212,0.06); border-color: rgba(6,182,212,0.2); color: #67e8f9;">
+        <span class="tip-icon" style="background: rgba(6,182,212,0.15);">KUR</span>
+        Udemy → Angela Yu ile 100 Günlük Python Kursu
+      </div>
+      <div class="tip" style="background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2); color: #fca5a5; margin-top: 8px;">
+        <span class="tip-icon" style="background: rgba(239,68,68,0.15);">★★★</span>
+        Günde en az 2 saatini Python'a ayırmalısın
+      </div>
+    </div>
+
+    <div class="card accent-orange">
+      <span class="card-number">// R</span>
+      <h2>R Dili</h2>
+      <ul>
+        <li>Genel amaçlı bir dil değil</li>
+        <li>Sadece istatistik amaçlı kullanılır</li>
+        <li>Akademik alanda işe yarar</li>
+        <li>Fazla üzerinde durmaya gerek yok</li>
+        <li>Basit bir şey, rahat ol</li>
+      </ul>
+      <div class="tip" style="background: rgba(245,158,11,0.06); border-color: rgba(245,158,11,0.2); color: #fcd34d; margin-top: 24px;">
+        <span class="tip-icon" style="background: rgba(245,158,11,0.15);">→ NOT</span>
+        Ana odak Python. R'ı hafif bir araç olarak düşün.
+      </div>
+    </div>
+  </div>
+
+  <!-- PYTHON PRATİĞİ -->
+  <div class="card" style="margin-top: 20px;">
+    <span class="card-number">// Python Pratiği</span>
+    <h2>Ne Yapmalısın?</h2>
+    <ul>
+      <li>Her gün bol bol Python örneği çöz — kas gibi düşün, çalışmadan gelişmez</li>
+      <li>Angela Yu kursunda Pandas kütüphanesi de anlatılıyor, dikkat et</li>
+      <li>20 günde büyük ihtimal bildiğim kadar Python bilirsin</li>
+      <li>Data Structures için w3schools yeterli — hocaların anlattıkları 5 para etmez</li>
+      <li>Ezberle değil, örneklerle kavra. Data Structures örneklerle gelir</li>
+    </ul>
+    <div class="tip">
+      <span class="tip-icon">→ ALTIN KURAL</span>
+      Kendi notlarını tut. Beyninde tutmaya çalışmak yerine defterde olması kafanı rahatlatır.
+    </div>
+  </div>
+
+  <!-- SECTION 5: SQL -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">§ 05 — Veritabanı</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <span class="card-number">// SQL</span>
+      <h2>SQL — Yapılandırılmış Sorgu Dili</h2>
+      <ul>
+        <li>4. seviye kodlama dili</li>
+        <li>Verilerin saklandığı Database ile konuşmayı sağlar</li>
+        <li>Okunaklı sözdizimi: CREATE, DELETE, UPDATE...</li>
+        <li>Veri bilimci olarak SQL bilgin şart</li>
+        <li>Veri barındırma, çekme, optimizasyon, anlamlı sonuç çıkarma</li>
+      </ul>
+      <div class="tags">
+        <span class="tag tag-purple">SELECT</span>
+        <span class="tag tag-purple">JOIN</span>
+        <span class="tag tag-purple">CREATE</span>
+        <span class="tag tag-purple">DELETE</span>
+        <span class="tag tag-purple">UPDATE</span>
+      </div>
+    </div>
+
+    <div class="card accent-red">
+      <span class="card-number">// NoSQL</span>
+      <h2>NoSQL — Duymamış Olabilirsin</h2>
+      <ul>
+        <li>Verilerle konuşma ve depolamaya yarar</li>
+        <li>Ama SQL dili kullanmaz</li>
+        <li>Tablo, sütun, satır yok — farklı formatlar</li>
+        <li>SQL'e göre daha esnek ama daha az düzenli</li>
+        <li>Veriler JSON gibi formatlarda saklanır</li>
+      </ul>
+      <div class="tip" style="background: rgba(239,68,68,0.06); border-color: rgba(239,68,68,0.2); color: #fca5a5;">
+        <span class="tip-icon" style="background: rgba(239,68,68,0.15);">→ NOT</span>
+        SQL'i iyi öğren, NoSQL'e sonra geçersin.
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 6: VERİ FORMATLARI -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">§ 06 — Veri & Araçlar</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="card">
+    <span class="card-number">// Veri Formatları</span>
+    <h2>Birkaç Önemli Husus</h2>
+    <div class="grid-3" style="margin-top: 16px; gap: 16px;">
+      <div style="background: rgba(124,58,237,0.06); border: 1px solid rgba(124,58,237,0.15); border-radius: 4px; padding: 20px;">
+        <div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: var(--accent2); margin-bottom: 8px;">CSV</div>
+        <div style="font-size: 13px; color: #94a3b8; line-height: 1.7;">Virgül ile ayrılmış değerler. Datacı olarak en çok kullanacağın dosya türü. Veri taşımada standart format.</div>
+      </div>
+      <div style="background: rgba(6,182,212,0.06); border: 1px solid rgba(6,182,212,0.15); border-radius: 4px; padding: 20px;">
+        <div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: var(--cyan); margin-bottom: 8px;">JSON</div>
+        <div style="font-size: 13px; color: #94a3b8; line-height: 1.7;">NoSQL ve web'de yaygın. ~1 saatlik öğrenme süresi. Araştır, öğren, geç.</div>
+      </div>
+      <div style="background: rgba(16,185,129,0.06); border: 1px solid rgba(16,185,129,0.15); border-radius: 4px; padding: 20px;">
+        <div style="font-family: 'Space Mono', monospace; font-size: 13px; font-weight: 700; color: var(--green); margin-bottom: 8px;">XML</div>
+        <div style="font-size: 13px; color: #94a3b8; line-height: 1.7;">Eski ama kullanılan format. 1 saatlik öğrenme. Ara sıra karşına çıkar, korkma.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top: 20px;">
+    <span class="card-number">// Web Scraping</span>
+    <h2>Web Scraping — Veri Kazıma</h2>
+    <p>Web sitelerinden işine yarayacak verileri otomatik olarak çekmeni sağlayan tekniktir. Mesela <strong style="color: var(--text);">cimri.com</strong> gibi ürün karşılaştırma siteleri bu mantıkla çalışır.</p>
+    <div class="tip">
+      <span class="tip-icon">→ GERÇEK</span>
+      Aynı mantığı MAZ 2025 Zirvesi'nde kodlayıp sundum. Rektör sonrasında toplantıda övmüş 😄
+    </div>
+  </div>
+
+  <!-- SECTION 7: SON TAVSİYELER -->
+  <div class="divider">
+    <div class="divider-line"></div>
+    <div class="divider-label">§ 07 — Son Notlar</div>
+    <div class="divider-line"></div>
+  </div>
+
+  <div class="section-hero">
+    <span class="card-number" style="font-family: 'Space Mono', monospace; font-size: 11px; letter-spacing: 2px; color: var(--accent2); text-transform: uppercase; margin-bottom: 12px; display: block;">// Bitiş · Haydi Başla</span>
+    <h2 style="font-size: 26px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 24px;">Ve Son Olarak...</h2>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div class="tip">
+        <span class="tip-icon">01</span>
+        Her gün olmasa da 3 günde 1 proje yap. Yaptığın projelerle portfolyonunu oluştur ve GitHub'a koy. Sonra diyecekler: "GitHub hesabını ver bakim."
+      </div>
+      <div class="tip">
+        <span class="tip-icon">02</span>
+        Kodlama kadar matematik ve istatistik çalışmayı da aksatma. İkisi birlikte gidiyor.
+      </div>
+      <div class="tip">
+        <span class="tip-icon">03</span>
+        İlerleyince Machine Learning, Data Analyst, Data Engineering yol haritalarına da bak.
+      </div>
+      <div class="tip">
+        <span class="tip-icon">04</span>
+        Anlamadığın konuları ChatGPT'ye sor. "Yav bu ne işe yarıyor?" de. Anlamazsan "hiç bilmeyen birineymiş gibi anlat" de. Üzerine birkaç örnek çöz.
+      </div>
+      <div class="tip" style="background: rgba(124,58,237,0.08); border-color: rgba(124,58,237,0.25); color: #c4b5fd;">
+        <span class="tip-icon" style="background: rgba(124,58,237,0.15);">★ SON</span>
+        Yapacağına inancım tam. Sadece kendini boğma yeterli. 1. adımdayken 10. adımı düşünme. Anlamadığın bir şey olursa sor.
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <p>Veri Bilimi Yol Haritası &nbsp;·&nbsp; roadmap.sh/ai-data-scientist &nbsp;·&nbsp; 2025</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
